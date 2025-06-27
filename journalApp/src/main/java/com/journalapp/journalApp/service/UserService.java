@@ -3,7 +3,10 @@ package com.journalapp.journalApp.service;
 
 import com.journalapp.journalApp.entity.User;
 import com.journalapp.journalApp.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @Component
+@Slf4j
 public class UserService {
 
     @Autowired
@@ -23,11 +27,21 @@ public class UserService {
 
     private static final PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
 
+
     public User saveNewUser(User user)
     {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(Arrays.asList("USER"));
-        return repo.save(user);
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRoles(Arrays.asList("USER"));
+            return repo.save(user);
+        } catch (Exception e) {
+            log.error("Error occured for {}:",user.getUsername(),e);
+            log.warn("CHECKING WARN");
+            log.info("CHECKING INFO");
+            log.debug("CHECKING DEBUG");
+            log.trace("CHECKING TRACE");
+            return null;
+        }
     }
 
 
